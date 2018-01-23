@@ -39,7 +39,9 @@ import static com.google.android.gms.maps.model.BitmapDescriptorFactory.defaultM
 
 public class MapsActivity extends FragmentActivity implements
         OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener,
+        GoogleMap.OnMarkerClickListener,
+        GoogleMap.OnMarkerDragListener {
 
     private GoogleMap mMap;
     private GoogleApiClient client;
@@ -49,6 +51,7 @@ public class MapsActivity extends FragmentActivity implements
     int PROXIMITY_RADIUS=10000;
     double latitude;
     double longitude;
+    double end_latitude, end_longitude;
 
 
     public static final int REQUEST_LOCATION_CODE=99;
@@ -107,13 +110,22 @@ public class MapsActivity extends FragmentActivity implements
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                    PackageManager.PERMISSION_GRANTED){
+                buildGoogleApiClient();
+                mMap.setMyLocationEnabled(true);
+            }
 
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED)
-        {
+        }else {
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
 
         }
+
+        mMap.setOnMarkerDragListener(this);
+        mMap.setOnMarkerClickListener(this);
+
 
 
     }
@@ -217,7 +229,7 @@ public class MapsActivity extends FragmentActivity implements
                         getNearbyPlacesData.execute(dataTransfer);
                         Toast.makeText(MapsActivity.this,"Showing nearby restaurants",Toast.LENGTH_LONG).show();
                         break;
-                 case R.id.B_schools:
+                case R.id.B_schools:
                      mMap.clear();
                      String school="school";
                      url=getUrl(latitude,longitude,school);
@@ -227,8 +239,34 @@ public class MapsActivity extends FragmentActivity implements
                      getNearbyPlacesData.execute(dataTransfer);
                      Toast.makeText(MapsActivity.this,"Showing nearby schools",Toast.LENGTH_LONG).show();
                      break;
+                case R.id.B_to:
+                    dataTransfer = new Object[3];
+                    url = getDirectionUrl();
+                    GetDirectionsData getDirectionsData = new GetDirectionsData();
+                    dataTransfer[0]=mMap;
+                    dataTransfer[1]=url;
+                    dataTransfer[2]= new LatLng(end_latitude, end_longitude);
+                    getDirectionsData.execute(dataTransfer);
+
+                    break;
+
+
 
     }
+    }
+
+    private String getDirectionUrl()
+    {
+
+        StringBuilder googleDirectionsUrl = new StringBuilder("https://maps.googleapis.com/maps/api/directions/json?");
+        googleDirectionsUrl.append("origin="+latitude+","+longitude);
+
+        googleDirectionsUrl.append("&destination="+end_latitude+","+end_longitude);
+        googleDirectionsUrl.append("&key="+"AIzaSyCIdAudxSDIzbiJ2PBW6SrSBOFfXGl092I");
+
+        return googleDirectionsUrl.toString();
+
+
     }
 
     private String getUrl(double latitude, double longtitude, String nearbyPlace)
@@ -284,4 +322,28 @@ public class MapsActivity extends FragmentActivity implements
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
-}
+
+        @Override
+        public boolean onMarkerClick(Marker marker) {
+            marker.setDraggable(true);
+            return false;
+        }
+
+        @Override
+        public void onMarkerDragStart(Marker marker) {
+
+        }
+
+        @Override
+        public void onMarkerDrag(Marker marker) {
+
+        }
+
+        @Override
+        public void onMarkerDragEnd(Marker marker) {
+            end_latitude = marker.getPosition().latitude;
+            end_longitude = marker.getPosition().longitude;
+
+
+        }
+    }
