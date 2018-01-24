@@ -126,7 +126,25 @@ public class MapsActivity extends FragmentActivity implements
         mMap.setOnMarkerDragListener(this);
         mMap.setOnMarkerClickListener(this);
 
+    }
 
+    public void changeType(View view)
+    {
+        if(mMap.getMapType()== GoogleMap.MAP_TYPE_NORMAL){
+            mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+
+        }
+        else if (mMap.getMapType()== GoogleMap.MAP_TYPE_SATELLITE){
+            mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+
+        }
+        else if(mMap.getMapType()==GoogleMap.MAP_TYPE_TERRAIN){
+            mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        }
+        else if (mMap.getMapType()==GoogleMap.MAP_TYPE_HYBRID){
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+
+        }
 
     }
 
