@@ -131,13 +131,10 @@ public class MapsActivity extends FragmentActivity implements
     public void changeType(View view)
     {
         if(mMap.getMapType()== GoogleMap.MAP_TYPE_NORMAL){
-            mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-
-        }
-        else if (mMap.getMapType()== GoogleMap.MAP_TYPE_SATELLITE){
             mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
 
         }
+
         else if(mMap.getMapType()==GoogleMap.MAP_TYPE_TERRAIN){
             mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         }
@@ -171,7 +168,7 @@ public class MapsActivity extends FragmentActivity implements
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
-        markerOptions.title("Current Location");
+        markerOptions.title("Location");
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
 
         currentLocationMarker =mMap.addMarker(markerOptions);
@@ -226,40 +223,12 @@ public class MapsActivity extends FragmentActivity implements
             }
         }
         break;
-                case R.id.B_hopistals:
-                    mMap.clear();
-                    String hospital="hospital";
-                    String url=getUrl(latitude,longitude,hospital);
-                    dataTransfer[0]=mMap;
-                    dataTransfer[1]=url;
 
-                    getNearbyPlacesData.execute(dataTransfer);
-                    Toast.makeText(MapsActivity.this,"Showing nearby Hospitals",Toast.LENGTH_LONG).show();
-                    break;
 
-                case R.id.B_restaurants:
-                        mMap.clear();
-                        String restaurant="restaurant";
-                        url=getUrl(latitude,longitude,restaurant);
-                        dataTransfer[0]=mMap;
-                        dataTransfer[1]=url;
 
-                        getNearbyPlacesData.execute(dataTransfer);
-                        Toast.makeText(MapsActivity.this,"Showing nearby restaurants",Toast.LENGTH_LONG).show();
-                        break;
-                case R.id.B_schools:
-                     mMap.clear();
-                     String school="school";
-                     url=getUrl(latitude,longitude,school);
-                     dataTransfer[0]=mMap;
-                     dataTransfer[1]=url;
-
-                     getNearbyPlacesData.execute(dataTransfer);
-                     Toast.makeText(MapsActivity.this,"Showing nearby schools",Toast.LENGTH_LONG).show();
-                     break;
                 case R.id.B_to:
                     dataTransfer = new Object[3];
-                    url = getDirectionUrl();
+                    String url = getDirectionUrl();
                     GetDirectionsData getDirectionsData = new GetDirectionsData();
                     dataTransfer[0]=mMap;
                     dataTransfer[1]=url;
