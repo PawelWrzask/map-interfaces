@@ -13,6 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -52,6 +53,7 @@ public class MapsActivity extends FragmentActivity implements
     double latitude;
     double longitude;
     double end_latitude, end_longitude;
+    static GameEngine gameEngine = new GameEngine();
 
 
     public static final int REQUEST_LOCATION_CODE=99;
@@ -161,6 +163,12 @@ public class MapsActivity extends FragmentActivity implements
         latitude = location.getLatitude();
         longitude = location.getLongitude();
 
+
+        gameEngine.update(location);
+        for(MarkerOptions marker : gameEngine.getMarkers()){
+            mMap.addMarker(marker);
+        }
+
         lastLocation = location;
 
         if(currentLocationMarker !=null)
@@ -177,7 +185,7 @@ public class MapsActivity extends FragmentActivity implements
         currentLocationMarker =mMap.addMarker(markerOptions);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomBy(10));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
 
 
         if(client!=null)
@@ -280,7 +288,7 @@ public class MapsActivity extends FragmentActivity implements
         googleDirectionsUrl.append("origin="+latitude+","+longitude);
 
         googleDirectionsUrl.append("&destination="+end_latitude+","+end_longitude);
-        googleDirectionsUrl.append("&key="+"AIzaSyCIdAudxSDIzbiJ2PBW6SrSBOFfXGl092I");
+        googleDirectionsUrl.append("&key="+"AIzaSyAHRv-BMW6AMzHG60owxtfCCckpPfU9-Uc\t");
 
         return googleDirectionsUrl.toString();
 
@@ -295,7 +303,7 @@ public class MapsActivity extends FragmentActivity implements
         googlePlaceUrl.append("&radius"+PROXIMITY_RADIUS);
         googlePlaceUrl.append("&type="+nearbyPlace);
         googlePlaceUrl.append("&sensor=true");
-        googlePlaceUrl.append("&key=AIzaSyBx_ftKVu4-Yt38GO7CFdw8CNKdMHS21vw");
+        googlePlaceUrl.append("&key=AIzaSyAHRv-BMW6AMzHG60owxtfCCckpPfU9-Uc\t");
 
         return googlePlaceUrl.toString();
     }
