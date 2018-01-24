@@ -52,6 +52,7 @@ public class MapsActivity extends FragmentActivity implements
     double latitude;
     double longitude;
     double end_latitude, end_longitude;
+    boolean isInitialized=false;
 
 
     public static final int REQUEST_LOCATION_CODE=99;
@@ -173,9 +174,12 @@ public class MapsActivity extends FragmentActivity implements
 
         currentLocationMarker =mMap.addMarker(markerOptions);
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomBy(10));
-
+        if(!isInitialized)
+        {
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            mMap.animateCamera(CameraUpdateFactory.zoomBy(10));
+            isInitialized=true;
+        }
 
         if(client!=null)
         {
