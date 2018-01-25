@@ -17,9 +17,9 @@ import java.util.List;
 
 public class GameEngine {
 
-    private static double MAX_DISTANCE = 0.02f;
+    private static double MAX_DISTANCE = 0.01f;
     private static int AMOUNT_OF_MARKERS = 10;
-    private static double MINIMAL_DISTANCE_TO_SCORE = 20;
+    private static double MINIMAL_DISTANCE_TO_SCORE = 50;
     private static int SCORED_POINTS = 10;
 
     private int score;
@@ -73,5 +73,9 @@ public class GameEngine {
 
     public List<MarkerOptions> getMarkers(){
         return markers;
+    }
+
+    public int getScore(){
+        return score;
     }
 }

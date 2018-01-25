@@ -16,6 +16,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -34,6 +35,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.defaultMarker;
@@ -167,6 +169,9 @@ public class MapsActivity extends FragmentActivity implements
             mMap.addMarker(marker);
         }
 
+        TextView etScore = (TextView)findViewById(R.id.score);
+        etScore.setText(String.valueOf(gameEngine.getScore()));
+
         lastLocation = location;
 
         if(currentLocationMarker !=null)
@@ -185,7 +190,7 @@ public class MapsActivity extends FragmentActivity implements
         if(!isInitialized)
         {
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-            mMap.animateCamera(CameraUpdateFactory.zoomBy(10));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
             isInitialized=true;
         }
 
@@ -206,10 +211,10 @@ public class MapsActivity extends FragmentActivity implements
         switch(v.getId()) {
         case R.id.B_search:
         {
-            EditText tf_location= (EditText)findViewById(R.id.TF_location);
+            EditText tf_location = (EditText)findViewById(R.id.TF_location);
             String location = tf_location.getText().toString();
 
-            List<Address> addressList=null;
+            List<Address> addressList= new ArrayList<>();
             MarkerOptions mo = new MarkerOptions();
 
             if(!location.equals(""))
@@ -261,7 +266,7 @@ public class MapsActivity extends FragmentActivity implements
         googleDirectionsUrl.append("origin="+latitude+","+longitude);
 
         googleDirectionsUrl.append("&destination="+end_latitude+","+end_longitude);
-        googleDirectionsUrl.append("&key="+"AIzaSyCIdAudxSDIzbiJ2PBW6SrSBOFfXGl092I");
+        googleDirectionsUrl.append("&key="+"AIzaSyAHRv-BMW6AMzHG60owxtfCCckpPfU9-Uc");
 
         return googleDirectionsUrl.toString();
 
@@ -276,7 +281,7 @@ public class MapsActivity extends FragmentActivity implements
         googlePlaceUrl.append("&radius"+PROXIMITY_RADIUS);
         googlePlaceUrl.append("&type="+nearbyPlace);
         googlePlaceUrl.append("&sensor=true");
-        googlePlaceUrl.append("&key=AIzaSyBx_ftKVu4-Yt38GO7CFdw8CNKdMHS21vw");
+        googlePlaceUrl.append("&key=AIzaSyAHRv-BMW6AMzHG60owxtfCCckpPfU9-Uc");
 
         return googlePlaceUrl.toString();
     }
