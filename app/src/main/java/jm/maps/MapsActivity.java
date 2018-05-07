@@ -14,7 +14,9 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,6 +59,8 @@ public class MapsActivity extends FragmentActivity implements
     double end_latitude, end_longitude;
     boolean isInitialized=false;
     static GameEngine gameEngine = new GameEngine();
+
+
 
 
     public static final int REQUEST_LOCATION_CODE=99;
@@ -244,13 +248,21 @@ public class MapsActivity extends FragmentActivity implements
 
 
                 case R.id.B_to:
-                    dataTransfer = new Object[3];
+
+                    TextView etScore = (TextView)findViewById(R.id.score);
+                    Log.i("socket: ","before sending out");
+                    Client myClient = new Client("31.186.82.95", 51069, etScore);
+                    myClient.execute();
+                    Log.i("socket: ","after sending out");
+
+
+                    /*dataTransfer = new Object[3];
                     String url = getDirectionUrl();
                     GetDirectionsData getDirectionsData = new GetDirectionsData();
                     dataTransfer[0]=mMap;
                     dataTransfer[1]=url;
                     dataTransfer[2]= new LatLng(end_latitude, end_longitude);
-                    getDirectionsData.execute(dataTransfer);
+                    getDirectionsData.execute(dataTransfer);*/
 
                     break;
 
@@ -266,7 +278,7 @@ public class MapsActivity extends FragmentActivity implements
         googleDirectionsUrl.append("origin="+latitude+","+longitude);
 
         googleDirectionsUrl.append("&destination="+end_latitude+","+end_longitude);
-        googleDirectionsUrl.append("&key="+"AIzaSyAHRv-BMW6AMzHG60owxtfCCckpPfU9-Uc");
+        googleDirectionsUrl.append("&key=AIzaSyDxdzWca6yNgPRRks8xaet4CLpirt4Rxzk");
 
         return googleDirectionsUrl.toString();
 
@@ -281,7 +293,7 @@ public class MapsActivity extends FragmentActivity implements
         googlePlaceUrl.append("&radius"+PROXIMITY_RADIUS);
         googlePlaceUrl.append("&type="+nearbyPlace);
         googlePlaceUrl.append("&sensor=true");
-        googlePlaceUrl.append("&key=AIzaSyAHRv-BMW6AMzHG60owxtfCCckpPfU9-Uc");
+        googlePlaceUrl.append("&key=AIzaSyDxdzWca6yNgPRRks8xaet4CLpirt4Rxzk");
 
         return googlePlaceUrl.toString();
     }
