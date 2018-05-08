@@ -129,6 +129,7 @@ public class DataParser {
 
     public String[] getPaths(JSONArray googleStepJson)
     {
+        if(googleStepJson == null) return new String[0];
         int count = googleStepJson.length();
         String[] polylines = new String[count];
 

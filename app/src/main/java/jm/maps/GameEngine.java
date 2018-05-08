@@ -21,6 +21,7 @@ public class GameEngine {
     private static int AMOUNT_OF_MARKERS = 10;
     private static double MINIMAL_DISTANCE_TO_SCORE = 50;
     private static int SCORED_POINTS = 10;
+    private static int MINIMAL_DISTANCE_BETWEEN_MARKERS = 600;
 
     private int score;
 
@@ -35,11 +36,24 @@ public class GameEngine {
     private void initialize(Location location){
         if(initialized) return;
         initialized = true;
-
         markers = new ArrayList<MarkerOptions>();
         for(int i = 0 ; i < AMOUNT_OF_MARKERS ; i++){
             MarkerOptions options = new MarkerOptions();
-            options.position(getRandomNearLocation(location,MAX_DISTANCE));
+            LatLng newPointerLocation = new LatLng(location.getLatitude(), location.getLongitude());
+
+            boolean acceptableNewLocation = false;
+            while(!acceptableNewLocation) { //kiedy nowa lokalizacja nie jest ok
+                newPointerLocation = getRandomNearLocation(location, MAX_DISTANCE); // losowanie nowej pozycji
+                acceptableNewLocation = true; // zakladamy ze jest ok
+                for(MarkerOptions marker : markers) {
+                    //sprawdzamy czy rzeczywiscie jest ok
+                    if (SphericalUtil.computeDistanceBetween(marker.getPosition(), newPointerLocation) < MINIMAL_DISTANCE_BETWEEN_MARKERS) {
+                        acceptableNewLocation = false;
+                    }
+                }
+
+            }
+            options.position(newPointerLocation);
             options.title("punkt "+String.valueOf(i));
             options.icon(BitmapDescriptorFactory.defaultMarker(getRandomColor()));
             markers.add(options);
@@ -70,6 +84,13 @@ public class GameEngine {
         return latLng;
     }
 
+    private LatLng getRandomOnCircleLocation(Location location, double maxDistance){
+        double randomAngle = Math.random()*360;
+        double changeLat = Math.cos(Math.toRadians(randomAngle))*maxDistance;
+        double changeLng = Math.sin(Math.toRadians(randomAngle))*maxDistance*1.5;
+        LatLng latLng = new LatLng(location.getLatitude() + changeLat,location.getLongitude() + changeLng);
+        return latLng;
+    }
 
     public List<MarkerOptions> getMarkers(){
         return markers;
