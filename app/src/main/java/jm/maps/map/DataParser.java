@@ -1,4 +1,4 @@
-package jm.maps;
+package jm.maps.map;
 
 import android.util.Log;
 
@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by hp on 2018-01-12.
+ * Created by Julia Matlak on 2018-01-12.
  */
 
 public class DataParser {

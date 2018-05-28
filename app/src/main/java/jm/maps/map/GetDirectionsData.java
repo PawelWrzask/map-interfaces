@@ -1,22 +1,20 @@
-package jm.maps;
+package jm.maps.map;
 
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.provider.ContactsContract;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
+
+import jm.maps.map.DataParser;
+import jm.maps.map.DownloadUrl;
 
 /**
- * Created by hp on 2018-01-22.
+ * Created by Julia Matlak on 2018-01-22.
  */
 
 public class GetDirectionsData extends AsyncTask<Object,String,String> {

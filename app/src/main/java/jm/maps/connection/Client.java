@@ -1,4 +1,4 @@
-package jm.maps;
+package jm.maps.connection;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.TextView;
@@ -19,7 +19,7 @@ public class Client extends AsyncTask<Void, Void, String> {
     String response = "";
     TextView textResponse;
 
-    Client(String addr, int port, TextView textResponse) {
+    public Client(String addr, int port, TextView textResponse) {
         dstAddress = addr;
         dstPort = port;
         this.textResponse = textResponse;
@@ -50,11 +50,9 @@ public class Client extends AsyncTask<Void, Void, String> {
             }
 
         } catch (UnknownHostException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             response = "UnknownHostException: " + e.toString();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             response = "IOException: " + e.toString();
         } finally {

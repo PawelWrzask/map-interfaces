@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Janek on 2018-01-24.
+ * Created by Pawel Wrzask on 2018-01-24.
  */
 
 public class GameEngine {
@@ -22,6 +22,7 @@ public class GameEngine {
     private static double MINIMAL_DISTANCE_TO_SCORE = 50;
     private static int SCORED_POINTS = 10;
     private static int MINIMAL_DISTANCE_BETWEEN_MARKERS = 600;
+    private static int ACCEPTABLE_RETRIES = 100;
 
     private int score;
 
@@ -29,7 +30,7 @@ public class GameEngine {
 
     boolean initialized = false;
 
-    GameEngine(){
+    public GameEngine(){
         score = 0;
     }
 
@@ -41,8 +42,11 @@ public class GameEngine {
             MarkerOptions options = new MarkerOptions();
             LatLng newPointerLocation = new LatLng(location.getLatitude(), location.getLongitude());
 
+            int retries = 0;
+
             boolean acceptableNewLocation = false;
             while(!acceptableNewLocation) { //kiedy nowa lokalizacja nie jest ok
+                Log.i("losowanie punktu","aaa");
                 newPointerLocation = getRandomNearLocation(location, MAX_DISTANCE); // losowanie nowej pozycji
                 acceptableNewLocation = true; // zakladamy ze jest ok
                 for(MarkerOptions marker : markers) {
@@ -52,6 +56,8 @@ public class GameEngine {
                     }
                 }
 
+                retries++;
+                if(retries > ACCEPTABLE_RETRIES) return;
             }
             options.position(newPointerLocation);
             options.title("punkt "+String.valueOf(i));

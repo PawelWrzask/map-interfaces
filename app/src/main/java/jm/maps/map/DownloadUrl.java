@@ -1,4 +1,4 @@
-package jm.maps;
+package jm.maps.map;
 
 import android.util.Log;
 
@@ -13,7 +13,7 @@ import java.net.URL;
 import static android.R.id.input;
 
 /**
- * Created by hp on 2018-01-12.
+ * Created by Julia Matlak on 2018-01-12.
  */
 
 public class DownloadUrl {

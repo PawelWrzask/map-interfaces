@@ -30,7 +30,7 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context="jm.maps.MapsActivity"
+        tools:context="jm.maps.activity.MapsActivity"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         />
