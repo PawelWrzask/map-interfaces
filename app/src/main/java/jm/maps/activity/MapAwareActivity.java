@@ -53,6 +53,9 @@ public class MapAwareActivity extends FragmentActivity implements
 
     private PermissionManager permissionManager;
 
+    public MapAwareActivity(String displayNotification) {
+    }
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
