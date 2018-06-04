@@ -3,6 +3,7 @@ package jm.maps.activity;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -24,11 +25,12 @@ import jm.maps.connection.Client;
 
 public class MapsActivity extends MapAwareActivity {
 
-    static GameEngine gameEngine;
-
-    MapsActivity(){
+    public MapsActivity() {
+        super("DisplayNotification");
         gameEngine = new GameEngine();
     }
+    static GameEngine gameEngine;
+
 
 
     @Override
