@@ -26,72 +26,24 @@ import jm.maps.connection.Client;
 public class MapsActivity extends MapAwareActivity {
 
     public MapsActivity() {
-        super("DisplayNotification");
-        gameEngine = new GameEngine();
+        //super("DisplayNotification");
+
     }
-    static GameEngine gameEngine;
 
 
-
-    @Override
     public void onLocationChanged(Location location) {
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
+        //latitude = location.getLatitude();
+        //longitude = location.getLongitude();
 
-
-        gameEngine.update(location);
-        for (MarkerOptions marker : gameEngine.getMarkers()) {
-            getMap().addMarker(marker);
+        //gameEngine.update(location);
+        //for (MarkerOptions marker : gameEngine.getMarkers()) {
+            //getMap().addMarker(marker);
         }
 
-        TextView etScore = (TextView) findViewById(R.id.score);
-        etScore.setText(String.valueOf(gameEngine.getScore()));
+        //TextView etScore = (TextView) findViewById(R.id.score);
+        //etScore.setText(String.valueOf(gameEngine.getScore()));
     }
 
-    public void onClick(View v) throws IOException {
-        switch (v.getId()) {
-            case R.id.B_search: {
-                EditText tf_location = (EditText) findViewById(R.id.TF_location);
-                String location = tf_location.getText().toString();
-
-                List<Address> addressList = new ArrayList<>();
-                MarkerOptions mo = new MarkerOptions();
-
-                if (!location.equals("")) {
-                    Geocoder geocoder = new Geocoder(this);
-                    try {
-                        addressList = geocoder.getFromLocationName(location, 5);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-
-                    }
-                    for (int i = 0; i < addressList.size(); i++) {
-                        Address myAddress = addressList.get(i);
-                        LatLng latLng = new LatLng(myAddress.getLatitude(), myAddress.getLongitude());
-                        mo.position(latLng);
-                        mo.title("Your search result");
-                        getMap().addMarker(mo);
-                        getMap().animateCamera(CameraUpdateFactory.newLatLng(latLng));
-
-                    }
-
-                }
-            }
-            break;
 
 
-            case R.id.B_to:
 
-                TextView etScore = (TextView) findViewById(R.id.score);
-                Log.i("socket: ", "before sending out");
-                Client myClient = new Client("31.186.82.95", 51069, etScore);
-                myClient.execute();
-                Log.i("socket: ", "after sending out");
-
-
-                break;
-
-
-        }
-    }
-}
