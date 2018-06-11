@@ -29,11 +29,22 @@ dependencies {
 
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.google.android.gms:play-services-maps:11.0.4'
-    implementation 'com.google.android.gms:play-services-location:11.0.4'
+    implementation 'com.google.firebase:firebase-auth:16.0.1'
+    implementation 'com.google.firebase:firebase-core:16.0.0'
+    implementation 'com.google.android.gms:play-services-maps:15.0.1'
+
+    implementation 'com.google.android.gms:play-services-auth:15.0.1'
+    implementation 'com.google.android.gms:play-services-location:15.0.1'
     implementation 'com.google.maps.android:android-maps-utils:0.5+'
+
+
+    implementation "com.google.android.gms:play-services-gcm:9.2.1"
+    implementation 'com.github.bumptech.glide:glide:4.3.1'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.3.1'
     testImplementation 'junit:junit:4.12'
     apply plugin: 'idea'
-
+    apply plugin: 'com.google.gms.google-services'
 
 }
+
+apply plugin: 'com.google.gms.google-services'
