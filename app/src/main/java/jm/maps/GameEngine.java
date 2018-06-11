@@ -46,7 +46,6 @@ public class GameEngine {
 
             boolean acceptableNewLocation = false;
             while(!acceptableNewLocation) { //kiedy nowa lokalizacja nie jest ok
-                Log.i("losowanie punktu","aaa");
                 newPointerLocation = getRandomNearLocation(location, MAX_DISTANCE); // losowanie nowej pozycji
                 acceptableNewLocation = true; // zakladamy ze jest ok
                 for(MarkerOptions marker : markers) {
@@ -67,6 +66,7 @@ public class GameEngine {
     }
 
     public void update(Location currentLocation){
+        score++;
         if(!initialized) initialize(currentLocation);
         LatLng current = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
         List<MarkerOptions> toDelete = new ArrayList<>();

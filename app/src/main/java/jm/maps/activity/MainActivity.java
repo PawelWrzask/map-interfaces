@@ -2,10 +2,12 @@ package jm.maps.activity;
 
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -62,24 +64,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private LocationRequest locationRequest;
     private Location lastLocation;
     private Marker currentLocationMarker;
-    int PROXIMITY_RADIUS=10000;
-    double latitude;
-    double longitude;
-    double end_latitude, end_longitude;
-    boolean isInitialized=false;
+    private int PROXIMITY_RADIUS=10000;
+    private double latitude;
+    private double longitude;
+    private double end_latitude, end_longitude;
+    private boolean isInitialized=false;
+
+    private static final GameEngine gameEngine = new GameEngine();
+
 
     public MainActivity(){
-        gameEngine = new GameEngine();
+
     }
-
-    static GameEngine gameEngine;
-
-    private PermissionManager permissionManager;
-
-
-
-
-
 
 
 
@@ -87,11 +83,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @SuppressWarnings("all")
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        PermissionManager permissionManager = new PermissionManager();
         if(permissionManager.isLocationPermissionGranted(requestCode, this, grantResults)){
-            if(client==null)
-            {
-                buildGoogleApiClient();
-            }
+            buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
         }else{
             Toast.makeText(this, "Permission Denied!", Toast.LENGTH_LONG).show();
@@ -115,11 +109,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public synchronized void buildGoogleApiClient()
     {
-        client=new GoogleApiClient.Builder(this).addConnectionCallbacks(this).
-                addOnConnectionFailedListener(this).addApi(LocationServices.API)
-                .build();
+        if(client==null) {
+            client = new GoogleApiClient.Builder(this).addConnectionCallbacks(this).
+                    addOnConnectionFailedListener(this).addApi(LocationServices.API)
+                    .build();
 
-        client.connect();
+            client.connect();
+        }
     }
 
     @Override
@@ -132,8 +128,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         latitude = location.getLatitude();
         longitude = location.getLongitude();
-
-        Log.i("bbbb","aaa");
 
         gameEngine.update(location);
         for (MarkerOptions marker : gameEngine.getMarkers()) {
@@ -154,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         markerOptions.title("Location");
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
 
-        currentLocationMarker =mMap.addMarker(markerOptions);
+        currentLocationMarker = mMap.addMarker(markerOptions);
 
         if(!isInitialized)
         {
@@ -163,9 +157,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             isInitialized=true;
         }
 
-        if(client!=null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
-        }
+
 
         locationChangedAction(location);
     }
@@ -202,12 +194,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onConnected(@Nullable Bundle bundle) {
+    public void onConnected(@Nullable Bundle bundle){
 
         locationRequest = new LocationRequest();
         locationRequest.setInterval(1000);
         locationRequest.setFastestInterval(1000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED) {
             LocationServices.FusedLocationApi.requestLocationUpdates(client, locationRequest, this);
@@ -252,10 +244,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return mMap;
     }
 
+    @SuppressWarnings("all")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -272,11 +266,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
 
-        //if (savedInstanceState == null) {
+        if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new FragmentMapsActivity()).commit();
             navigationView.setCheckedItem(R.id.nav_my_location);
-        //}
+        }
 
 
 

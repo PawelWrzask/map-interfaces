@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,13 +23,15 @@ import jm.maps.activity.MainActivity;
 public class FragmentMapsActivity extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private static int MAP_TYPE = GoogleMap.MAP_TYPE_HYBRID;;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.activity_maps, null, false);
-
+        View view = getView() != null ? getView() :
+                inflater.inflate(R.layout.activity_maps, null, false);
+        setRetainInstance(true);
         SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -58,12 +61,11 @@ public class FragmentMapsActivity extends Fragment implements OnMapReadyCallback
 
         activity.buildGoogleApiClient();
         mMap.setMyLocationEnabled(true);
-        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        mMap.setMapType(MAP_TYPE);
 
         mMap.setOnMarkerDragListener(activity);
         mMap.setOnMarkerClickListener(activity);
 
         activity.setMap(mMap);
-
     }
 }
