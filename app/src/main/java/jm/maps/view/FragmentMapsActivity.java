@@ -18,6 +18,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 
 import jm.maps.R;
 import jm.maps.activity.MainActivity;
+import jm.maps.utils.PermissionManager;
 
 
 public class FragmentMapsActivity extends Fragment implements OnMapReadyCallback {
@@ -52,19 +53,18 @@ public class FragmentMapsActivity extends Fragment implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         MainActivity activity = (MainActivity) getActivity();
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
-            if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) ==
-                    PackageManager.PERMISSION_GRANTED) {
 
-            }
-        }
+        PermissionManager permissionManager = new PermissionManager();
+        permissionManager.checkPermission(activity);
 
         activity.buildGoogleApiClient();
         mMap.setMyLocationEnabled(true);
-        mMap.setMapType(MAP_TYPE);
+        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
         mMap.setOnMarkerDragListener(activity);
         mMap.setOnMarkerClickListener(activity);
+
+
 
         activity.setMap(mMap);
     }

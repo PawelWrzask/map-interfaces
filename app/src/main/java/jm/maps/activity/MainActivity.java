@@ -57,7 +57,6 @@ import java.util.List;
 
 import jm.maps.GameEngine;
 import jm.maps.R;
-import jm.maps.connection.Client;
 import jm.maps.utils.PermissionManager;
 import jm.maps.view.FragmentDiscover;
 import jm.maps.view.FragmentHistory;
@@ -92,24 +91,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     FirebaseAuth mAuth;
 
-    public MainActivity(){
-
-
-
-
-
-
-
-
-
+    public MainActivity() {
+    }
 
     @SuppressWarnings("all")
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.i("onRequestPermissionsResult","aaa");
         PermissionManager permissionManager = new PermissionManager();
         if(permissionManager.isLocationPermissionGranted(requestCode, this, grantResults)){
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
+
         }else{
             Toast.makeText(this, "Permission Denied!", Toast.LENGTH_LONG).show();
         }
@@ -228,6 +221,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED) {
             LocationServices.FusedLocationApi.requestLocationUpdates(client, locationRequest, this);
+
         }
     }
 
@@ -350,8 +344,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
 
 
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        mAuth = FirebaseAuth.getInstance();
 
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -458,16 +454,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             break;
 
 
-            case R.id.B_to:
-
-                TextView etScore = (TextView) findViewById(R.id.score);
-                Log.i("socket: ", "before sending out");
-                Client myClient = new Client("31.186.82.95", 51069, etScore);
-                myClient.execute();
-                Log.i("socket: ", "after sending out");
-
-
-                break;
 
 
         }
