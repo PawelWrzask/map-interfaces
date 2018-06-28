@@ -6,21 +6,7 @@
 
 
 
-    <Button
-        android:id="@+id/B_search"
 
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/TF_location"
-        android:layout_marginTop="61dp"
-        android:onClick="onClick"
-        android:text="Search"
-        android:visibility="visible"
-        android:textColor="#B2B5BF"
-        android:textSize="14sp"
-
-        android:layout_width="70dp"
-        android:layout_height="20dp"
-        android:background="@drawable/buttonshape"/>
 
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
@@ -34,56 +20,38 @@
 
     <Button
         android:id="@+id/change_type"
-
+        android:radius="20dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginRight="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/buttonshape"
         android:onClick="changeType"
         android:text="*"
-        android:layout_marginTop="30dp"
-        android:layout_below="@+id/B_to"
-        android:layout_alignParentEnd="true"
         android:textColor="#B2B5BF"
-        android:textSize="14sp"
-
-        android:layout_width="70dp"
-        android:layout_height="20dp"
-        android:background="@drawable/buttonshape"/>
-
+        android:textSize="14sp" />
     <Button
-        android:id="@+id/B_to"
-        android:onClick="onClick"
-        android:text="To"
-        android:layout_marginTop="27dp"
-        android:layout_below="@+id/B_search"
+        android:id="@+id/restart"
+        android:radius="20dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginRight="10dp"
         android:layout_alignParentEnd="true"
-        android:textColor="#B2B5BF"
-        android:textSize="14sp"
-
-        android:layout_width="70dp"
-        android:layout_height="20dp"
-        android:background="@drawable/buttonshape"/>
-
-    <EditText
-        android:id="@+id/TF_location"
-        android:layout_width="290dp"
-        android:layout_height="45dp"
-        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Name"
-        android:visibility="visible"
-        android:layout_toStartOf="@+id/B_search" />
+        android:background="@drawable/buttonshape"
+        android:onClick="restart"
+        android:text="R"
+        android:textColor="#B2B5BF"
+        android:textSize="14sp" />
 
-    <TextView
-        android:id="@+id/score"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_alignStart="@+id/change_type"
-        android:layout_below="@+id/change_type"
-        android:layout_marginTop="49dp"
-        android:text="score"
-        android:textColor="#545454"
-        android:textSize="15sp"
-         />
+
+
+
+
+
 
 
 </RelativeLayout>

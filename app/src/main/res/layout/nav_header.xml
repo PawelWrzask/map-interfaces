@@ -21,11 +21,11 @@
         android:layout_height="wrap_content"
         android:contentDescription="a"
         android:paddingTop="8dp"
-        android:text="XD"
+        android:text="Odkrywaj swoje miasto"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="aaabbb" />
+        android:text="poznawaj zagrożone gatunki" />
 </LinearLayout>

@@ -24,10 +24,13 @@ import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import jm.maps.R;
 
@@ -36,33 +39,56 @@ public class FragmentDiscover extends Fragment {
 
     Context context;
     private TableLayout mainTable;
-    List<Integer> animalsList;
+    private static List<Integer> animalsList;
+    private static List<ImageView> images;
+    private static List<ImageView> undiscoveredImages;
 
+    private static boolean initialized = false;
 
+    private int rows = 6;
+    private int columns = 12;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_discover, container, false);
-
         mainTable = view.findViewById(R.id.TableRow02);
+        if(!initialized){
+            undiscoveredImages = new ArrayList<>();
+            images = new ArrayList<>();
+            initialized = true;
+            initialize();
+        }else{
+            for(int i = 0 ; i < rows ; i++){
+                TableRow tableRow = new TableRow(getActivity());
+                for(int j = 0 ; j < columns ; j++){
+                    ImageView image = images.get(i*columns+j);
+                    ((ViewGroup)image.getParent()).removeView(image);
+                    tableRow.addView(image);
+                }
+                mainTable.addView(tableRow);
+            }
+        }
+        return view;
+    }
+    private void initialize(){
         context = mainTable.getContext();
 
         loadAnimals();
-        Resources resources = context.getResources();
 
-        int rows = 6;
-        int columns = 6;
+
         for(int i = 0 ; i < rows ; i++){
             TableRow tableRow = new TableRow(getActivity());
             for(int j = 0 ; j < columns ; j++){
                 ImageView newImage = new ImageView(getActivity());
 
                 BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inJustDecodeBounds = true;
-                options.inSampleSize = 3;
+                options.inSampleSize = 2;
+                options.inJustDecodeBounds = false;
 
-                Bitmap originalBmp = BitmapFactory.decodeResource(context.getResources(), animalsList.get(i*columns+j));
+                Bitmap originalBmp = BitmapFactory.decodeResource(context.getResources(), animalsList.get(i*columns+j), options);
+
+
                 int imageSize = originalBmp.getWidth() > originalBmp.getHeight() ? originalBmp.getHeight() : originalBmp.getWidth();
                 Bitmap croppedBmp = Bitmap.createBitmap(originalBmp, 0, 0, imageSize, imageSize);
 
@@ -71,13 +97,17 @@ public class FragmentDiscover extends Fragment {
                 newImage.setMaxHeight(250);
                 newImage.setMaxWidth(250);
                 newImage.setAdjustViewBounds(true);
+                newImage.setVisibility(View.INVISIBLE);
+                undiscoveredImages.add(newImage);
+                images.add(newImage);
                 tableRow.addView(newImage);
             }
             mainTable.addView(tableRow);
         }
 
-
-        return view;
+        for(int i = 0 ; i< 10 ; i++){
+            discoverRandomImage();
+        }
     }
 
     private void loadAnimals(){
@@ -98,7 +128,6 @@ public class FragmentDiscover extends Fragment {
         animalsList.add(R.drawable.iglicznia);
         animalsList.add(R.drawable.jaszczurka_zielona);
         animalsList.add(R.drawable.karliczka_zwyczajna);
-        animalsList.add(R.drawable.koszatka_lesna);
         animalsList.add(R.drawable.kozica_polnocna);
         animalsList.add(R.drawable.krakwa);
         animalsList.add(R.drawable.kraska_zwyczajna);
@@ -162,25 +191,15 @@ public class FragmentDiscover extends Fragment {
         animalsList.add(R.drawable.zubr_europejski);
     }
 
+    public void discoverRandomImage(){
+        if(!initialized) return;
+        if(undiscoveredImages.size()<1) return;
 
-
-
-    private TableRow createRow(int y) {
-        TableRow row = new TableRow(context);
-        row.setHorizontalGravity(Gravity.CENTER);
-
-        for (int x = 0; x < 5; x++) {
-            row.addView(createImageButton(x, y));
-        }
-        return row;
-    }
-
-    private View createImageButton(int x, int y) {
-        Button button = new Button(context);
-        //button.setBackgroundDrawable(backImage);
-        button.setId(100 * x + y);
-        //button.setOnClickListener(buttonListener);
-        return button;
+        Random random = new Random();
+        int index = random.nextInt(undiscoveredImages.size());
+        ImageView image = undiscoveredImages.get(index);
+        undiscoveredImages.remove(index);
+        image.setVisibility(View.VISIBLE);
     }
 
     @Override

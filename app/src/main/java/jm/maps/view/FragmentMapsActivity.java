@@ -24,7 +24,7 @@ import jm.maps.utils.PermissionManager;
 public class FragmentMapsActivity extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private static int MAP_TYPE = GoogleMap.MAP_TYPE_HYBRID;;
+    private static int MAP_TYPE = GoogleMap.MAP_TYPE_NORMAL;
 
     @Nullable
     @Override
@@ -59,7 +59,7 @@ public class FragmentMapsActivity extends Fragment implements OnMapReadyCallback
 
         activity.buildGoogleApiClient();
         mMap.setMyLocationEnabled(true);
-        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        mMap.setMapType(MAP_TYPE);
 
         mMap.setOnMarkerDragListener(activity);
         mMap.setOnMarkerClickListener(activity);

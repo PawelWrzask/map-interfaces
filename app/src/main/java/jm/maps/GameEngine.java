@@ -1,10 +1,10 @@
 package jm.maps;
 
 import android.location.Location;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.SphericalUtil;
 
@@ -18,7 +18,7 @@ import java.util.List;
 public class GameEngine {
 
     private static double MAX_DISTANCE = 0.01f;
-    private static int AMOUNT_OF_MARKERS = 10;
+    private static int AMOUNT_OF_MARKERS = 3;
     private static double MINIMAL_DISTANCE_TO_SCORE = 50;
     private static int SCORED_POINTS = 10;
     private static int MINIMAL_DISTANCE_BETWEEN_MARKERS = 600;
@@ -26,7 +26,9 @@ public class GameEngine {
 
     private int score;
 
-    List<MarkerOptions> markers;
+    List<MarkerOptions> markerOptions;
+
+    List<Marker> markers;
 
     boolean initialized = false;
 
@@ -37,7 +39,8 @@ public class GameEngine {
     private void initialize(Location location){
         if(initialized) return;
         initialized = true;
-        markers = new ArrayList<MarkerOptions>();
+        markerOptions = new ArrayList<MarkerOptions>();
+        markers = new ArrayList<>();
         for(int i = 0 ; i < AMOUNT_OF_MARKERS ; i++){
             MarkerOptions options = new MarkerOptions();
             LatLng newPointerLocation = new LatLng(location.getLatitude(), location.getLongitude());
@@ -48,7 +51,7 @@ public class GameEngine {
             while(!acceptableNewLocation) { //kiedy nowa lokalizacja nie jest ok
                 newPointerLocation = getRandomNearLocation(location, MAX_DISTANCE); // losowanie nowej pozycji
                 acceptableNewLocation = true; // zakladamy ze jest ok
-                for(MarkerOptions marker : markers) {
+                for(MarkerOptions marker : markerOptions) {
                     //sprawdzamy czy rzeczywiscie jest ok
                     if (SphericalUtil.computeDistanceBetween(marker.getPosition(), newPointerLocation) < MINIMAL_DISTANCE_BETWEEN_MARKERS) {
                         acceptableNewLocation = false;
@@ -61,16 +64,25 @@ public class GameEngine {
             options.position(newPointerLocation);
             options.title("punkt "+String.valueOf(i));
             options.icon(BitmapDescriptorFactory.defaultMarker(getRandomColor()));
-            markers.add(options);
+            markerOptions.add(options);
         }
     }
 
+    public void restart(Location location){
+        for(Marker marker : markers){
+            marker.remove();
+        }
+        markers.clear();
+        markerOptions.clear();
+        initialized = false;
+        initialize(location);
+    }
+
     public void update(Location currentLocation){
-        score++;
         if(!initialized) initialize(currentLocation);
         LatLng current = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
         List<MarkerOptions> toDelete = new ArrayList<>();
-        for(MarkerOptions marker : markers){
+        for(MarkerOptions marker : markerOptions){
             int distance = (int)SphericalUtil.computeDistanceBetween(current, marker.getPosition());
             marker.title(String.valueOf(distance+"m"));
             if(distance < MINIMAL_DISTANCE_TO_SCORE){
@@ -78,7 +90,8 @@ public class GameEngine {
                 score += SCORED_POINTS;
             }
         }
-        markers.removeAll(toDelete);
+        markerOptions.removeAll(toDelete);
+
     }
 
     private float getRandomColor(){
@@ -98,11 +111,18 @@ public class GameEngine {
         return latLng;
     }
 
-    public List<MarkerOptions> getMarkers(){
-        return markers;
+    public List<MarkerOptions> getMarkerOptions(){
+        return markerOptions;
     }
 
     public int getScore(){
         return score;
+    }
+    public void setScore(int score){
+        this.score = score;
+    }
+
+    public void addMarker(Marker m) {
+        markers.add(m);
     }
 }

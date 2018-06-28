@@ -2,12 +2,8 @@ package jm.maps.activity;
 
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -21,8 +17,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.content.Intent;
 
@@ -51,18 +45,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import jm.maps.GameEngine;
 import jm.maps.R;
 import jm.maps.utils.PermissionManager;
 import jm.maps.view.FragmentDiscover;
-import jm.maps.view.FragmentHistory;
-import jm.maps.view.FragmentLogin;
 import jm.maps.view.FragmentMapsActivity;
-import jm.maps.view.FragmentNear;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener,
@@ -123,6 +110,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    public void restart(View view)
+    {
+        gameEngine.restart(lastLocation);
+        onLocationChanged(lastLocation);
+
+    }
+
     public synchronized void buildGoogleApiClient()
     {
         if(client==null) {
@@ -148,12 +142,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.i("bbbb","aaa");
 
         gameEngine.update(location);
-        for (MarkerOptions marker : gameEngine.getMarkers()) {
-            getMap().addMarker(marker);
+        for (MarkerOptions marker : gameEngine.getMarkerOptions()) {
+            Marker m = getMap().addMarker(marker);
+            gameEngine.addMarker(m);
         }
 
-        TextView etScore = (TextView) findViewById(R.id.score);
-//        etScore.setText(String.valueOf(gameEngine.getScore()));
+
+
+        updateDiscoverBoard();
+
+
 
         if(currentLocationMarker !=null)
         {
@@ -168,16 +166,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         currentLocationMarker = mMap.addMarker(markerOptions);
 
-        if(!isInitialized)
-        {
+
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
             isInitialized=true;
-        }
+
 
 
 
         locationChangedAction(location);
+    }
+
+    private void updateDiscoverBoard() {
+        FragmentDiscover fragment = new FragmentDiscover();
+        if(gameEngine.getScore()>0){
+            gameEngine.setScore(gameEngine.getScore()-1);
+            fragment.discoverRandomImage();
+        }
+
     }
 
     public void locationChangedAction(Location location){
@@ -217,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         locationRequest = new LocationRequest();
         locationRequest.setInterval(1000);
         locationRequest.setFastestInterval(1000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED) {
             LocationServices.FusedLocationApi.requestLocationUpdates(client, locationRequest, this);
@@ -230,12 +236,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onStart() {
         super.onStart();
 
+
         //if the user is already signed in
         //we will close this activity
         //and take the user to profile activity
         if (mAuth.getCurrentUser() != null) {
+            View b= findViewById(R.id.sign_in_button);
             String e= "Zalogowano";
             Toast.makeText(MainActivity.this, e, Toast.LENGTH_SHORT).show();
+            b.bringToFront();
 
 
         }
@@ -259,6 +268,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             } catch (ApiException e) {
                 Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
+
         }
     }
 
@@ -278,6 +288,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             FirebaseUser user = mAuth.getCurrentUser();
 
                             Toast.makeText(MainActivity.this, "User Signed In", Toast.LENGTH_SHORT).show();
+                            View b= findViewById(R.id.sign_in_button);
+
+                            b.bringToFront();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -394,18 +407,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                         new FragmentMapsActivity()).commit();
                 break;
-            case R.id.nav_near_me:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new FragmentLogin()).commit();
-                break;
+
+
             case R.id.discover:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                         new FragmentDiscover()).commit();
                 break;
-            case R.id.beenhere:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new FragmentHistory()).commit();
-                break;
+
 
         }
 
@@ -422,45 +430,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    public void onClick(View v) throws IOException {
-        switch (v.getId()) {
-            case R.id.B_search: {
-                EditText tf_location = (EditText) findViewById(R.id.TF_location);
-                String location = tf_location.getText().toString();
 
-                List<Address> addressList = new ArrayList<>();
-                MarkerOptions mo = new MarkerOptions();
-
-                if (!location.equals("")) {
-                    Geocoder geocoder = new Geocoder(this);
-                    try {
-                        addressList = geocoder.getFromLocationName(location, 5);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-
-                    }
-                    for (int i = 0; i < addressList.size(); i++) {
-                        Address myAddress = addressList.get(i);
-                        LatLng latLng = new LatLng(myAddress.getLatitude(), myAddress.getLongitude());
-                        mo.position(latLng);
-                        mo.title("Your search result");
-                        getMap().addMarker(mo);
-                        getMap().animateCamera(CameraUpdateFactory.newLatLng(latLng));
-
-                    }
-
-                }
-            }
-            break;
-
-
-
-
-        }
-    }
 
     public void setMap(GoogleMap map){
         this.mMap = map;
     }
+
 
 }
