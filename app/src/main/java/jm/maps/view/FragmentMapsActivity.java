@@ -2,6 +2,7 @@ package jm.maps.view;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.MapStyleOptions;
 
 import jm.maps.R;
 import jm.maps.activity.MainActivity;
@@ -54,6 +56,19 @@ public class FragmentMapsActivity extends Fragment implements OnMapReadyCallback
         mMap = googleMap;
         MainActivity activity = (MainActivity) getActivity();
 
+        try {
+            // Customise the styling of the base map using a JSON object defined
+            // in a raw resource file.
+            boolean success = googleMap.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                            activity, R.raw.style_json));
+
+            if (!success) {
+                Log.e("", "Style parsing failed.");
+            }
+        } catch (Resources.NotFoundException e) {
+            Log.e("", "Can't find style. Error: ", e);
+        }
         PermissionManager permissionManager = new PermissionManager();
         permissionManager.checkPermission(activity);
 

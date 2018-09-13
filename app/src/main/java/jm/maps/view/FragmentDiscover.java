@@ -1,5 +1,6 @@
 package jm.maps.view;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -7,7 +8,14 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.PaintDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,10 +27,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.Toast;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -39,11 +49,11 @@ public class FragmentDiscover extends Fragment {
 
     Context context;
     private TableLayout mainTable;
-    private static List<Integer> animalsList;
-    private static List<ImageView> images;
-    private static List<ImageView> undiscoveredImages;
+    private  List<Integer> animalsList;
+    private  List<ImageView> images;
+    private  List<ImageButton> undiscoveredImages;
 
-    private static boolean initialized = false;
+    private  boolean initialized = false;
 
     private int rows = 6;
     private int columns = 12;
@@ -71,16 +81,17 @@ public class FragmentDiscover extends Fragment {
         }
         return view;
     }
+
     private void initialize(){
         context = mainTable.getContext();
 
         loadAnimals();
-
+        ButtonListener buttonListener = new ButtonListener();
 
         for(int i = 0 ; i < rows ; i++){
             TableRow tableRow = new TableRow(getActivity());
             for(int j = 0 ; j < columns ; j++){
-                ImageView newImage = new ImageView(getActivity());
+
 
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inSampleSize = 2;
@@ -93,14 +104,20 @@ public class FragmentDiscover extends Fragment {
                 Bitmap croppedBmp = Bitmap.createBitmap(originalBmp, 0, 0, imageSize, imageSize);
 
 
-                newImage.setImageBitmap(croppedBmp);
-                newImage.setMaxHeight(250);
-                newImage.setMaxWidth(250);
-                newImage.setAdjustViewBounds(true);
-                newImage.setVisibility(View.INVISIBLE);
-                undiscoveredImages.add(newImage);
-                images.add(newImage);
-                tableRow.addView(newImage);
+
+                ImageButton button = new ImageButton(context);
+
+                button.setImageBitmap(croppedBmp);
+                button.setBackgroundColor(Color.BLACK);
+                button.setId(animalsList.get(i*columns+j));
+                button.setOnClickListener(buttonListener);
+                button.setMaxHeight(250);
+                button.setMaxWidth(250);
+                button.setAlpha(0);
+                button.setTag("invisible");
+                button.setAdjustViewBounds(true);
+                undiscoveredImages.add(button);
+                tableRow.addView(button);
             }
             mainTable.addView(tableRow);
         }
@@ -110,9 +127,31 @@ public class FragmentDiscover extends Fragment {
         }
     }
 
+    class ButtonListener implements View.OnClickListener {
+
+        @SuppressLint("ResourceType")
+        @Override
+        public void onClick(View v) {
+
+            Log.i("clicked","s");
+
+            ImageButton button = (ImageButton) v;
+            Log.i("alpha", String.valueOf(button.getAlpha()));
+
+            if(button.getTag().equals("invisible")) return;
+
+            Toast toast = new Toast(getActivity());
+            ImageView view = new ImageView(getActivity());
+            view.setImageResource(button.getId());
+            toast.setView(view);
+            toast.show();
+
+        }
+    }
+
     private void loadAnimals(){
         animalsList = new ArrayList<>();
-
+        animalsList.add(R.drawable.rys);
         animalsList.add(R.drawable.barczatka_kataks);
         animalsList.add(R.drawable.bocian_bialy);
         animalsList.add(R.drawable.bogatek_wspanialy);
@@ -189,6 +228,7 @@ public class FragmentDiscover extends Fragment {
         animalsList.add(R.drawable.zolna_zwyczajna);
         animalsList.add(R.drawable.zolw_blotny);
         animalsList.add(R.drawable.zubr_europejski);
+
     }
 
     public void discoverRandomImage(){
@@ -197,9 +237,10 @@ public class FragmentDiscover extends Fragment {
 
         Random random = new Random();
         int index = random.nextInt(undiscoveredImages.size());
-        ImageView image = undiscoveredImages.get(index);
+        ImageButton button = undiscoveredImages.get(index);
         undiscoveredImages.remove(index);
-        image.setVisibility(View.VISIBLE);
+        button.setAlpha(255);
+        button.setTag("visible");
     }
 
     @Override
